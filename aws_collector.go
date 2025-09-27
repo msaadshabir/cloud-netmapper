@@ -7,7 +7,8 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
-	"github.com/aws/aws-sdk-go-v2/service/elbv2"
+	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
+	"github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2"
 )
 
 type VPC struct {
@@ -17,11 +18,11 @@ type VPC struct {
 }
 
 type Subnet struct {
-	ID     string
-	VPCID  string
-	CIDR   string
-	AZ     string
-	Name   string
+	ID    string
+	VPCID string
+	CIDR  string
+	AZ    string
+	Name  string
 }
 
 type Instance struct {
@@ -47,19 +48,19 @@ type SGRule struct {
 }
 
 type LoadBalancer struct {
-	ARN   string
-	Name  string
-	VPCID string
+	ARN    string
+	Name   string
+	VPCID  string
 	Scheme string
-	Type  string
+	Type   string
 }
 
 type AWSResources struct {
-	VPCs            []VPC
-	Subnets         []Subnet
-	Instances       []Instance
-	SecurityGroups  []SecurityGroup
-	LoadBalancers   []LoadBalancer
+	VPCs           []VPC
+	Subnets        []Subnet
+	Instances      []Instance
+	SecurityGroups []SecurityGroup
+	LoadBalancers  []LoadBalancer
 }
 
 func getAWSResources(region string) (*AWSResources, error) {
@@ -69,7 +70,7 @@ func getAWSResources(region string) (*AWSResources, error) {
 	}
 
 	ec2Client := ec2.NewFromConfig(cfg)
-	elbClient := elbv2.NewFromConfig(cfg)
+	elbClient := elasticloadbalancingv2.NewFromConfig(cfg)
 
 	resources := &AWSResources{}
 
@@ -91,11 +92,11 @@ func getAWSResources(region string) (*AWSResources, error) {
 	}
 	for _, subnet := range subnetResp.Subnets {
 		resources.Subnets = append(resources.Subnets, Subnet{
-			ID:     *subnet.SubnetId,
-			VPCID:  *subnet.VpcId,
-			CIDR:   *subnet.CidrBlock,
-			AZ:     *subnet.AvailabilityZone,
-			Name:   getNameTag(subnet.Tags),
+			ID:    *subnet.SubnetId,
+			VPCID: *subnet.VpcId,
+			CIDR:  *subnet.CidrBlock,
+			AZ:    *subnet.AvailabilityZone,
+			Name:  getNameTag(subnet.Tags),
 		})
 	}
 
@@ -157,7 +158,7 @@ func getAWSResources(region string) (*AWSResources, error) {
 		})
 	}
 
-	lbResp, err := elbClient.DescribeLoadBalancers(context.TODO(), &elbv2.DescribeLoadBalancersInput{})
+	lbResp, err := elbClient.DescribeLoadBalancers(context.TODO(), &elasticloadbalancingv2.DescribeLoadBalancersInput{})
 	if err != nil {
 		log.Printf("Warning: no load balancers found or access denied: %v", err)
 	} else {
@@ -175,7 +176,7 @@ func getAWSResources(region string) (*AWSResources, error) {
 	return resources, nil
 }
 
-func getNameTag(tags []ec2.Tag) string {
+func getNameTag(tags []types.Tag) string {
 	for _, tag := range tags {
 		if *tag.Key == "Name" {
 			return *tag.Value
