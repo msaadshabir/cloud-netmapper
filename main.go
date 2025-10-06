@@ -15,8 +15,14 @@ func main() {
 		log.Fatalf("Error: %v", err)
 	}
 
-	rawData, _ := json.MarshalIndent(resources, "", "  ")
-	os.WriteFile("aws_resources.json", rawData, 0644)
+	rawData, err := json.MarshalIndent(resources, "", "  ")
+	if err != nil {
+		log.Fatalf("Failed to marshal JSON: %v", err)
+	}
+	err = os.WriteFile("aws_resources.json", rawData, 0644)
+	if err != nil {
+		log.Fatalf("Failed to write file: %v", err)
+	}
 	fmt.Println("💾 Raw data saved to aws_resources.json")
 
 	dotFile := "network_map.dot"
@@ -37,7 +43,7 @@ func main() {
 	if len(risks) > 0 {
 		fmt.Println("\n🚨 SECURITY RISKS FOUND:")
 		for _, risk := range risks {
-			fmt.Printf("  • [%s] %s: %s (Resource: %s)\n", 
+			fmt.Printf("  • [%s] %s: %s (Resource: %s)\n",
 				risk.Severity, risk.Type, risk.Details, risk.Resource)
 		}
 	} else {

@@ -45,7 +45,7 @@ func generateDOTFile(resources *AWSResources, filename string) error {
 
 	for _, lb := range resources.LoadBalancers {
 		label := fmt.Sprintf("LB\\n%s\\n(%s)", lb.Name, lb.Scheme)
-		lbID := "lb_" + strings.ReplaceAll(lb.ARN, ":", "_")
+		lbID := "lb_" + strings.ReplaceAll(strings.ReplaceAll(lb.ARN, ":", "_"), "/", "_")
 		vpcID := "vpc_" + strings.ReplaceAll(lb.VPCID, ":", "_")
 		fmt.Fprintf(file, "  %s [label=\"%s\", shape=diamond, style=filled, fillcolor=\"#FFB6C1\"];\n", lbID, label)
 		fmt.Fprintf(file, "  %s -> %s;\n", vpcID, lbID)
