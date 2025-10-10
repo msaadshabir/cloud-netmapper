@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	fmt.Println("☁️  Fetching AWS resources...")
+	fmt.Println("Fetching AWS resources...")
 	resources, err := getAWSResources("us-east-1")
 	if err != nil {
 		log.Fatalf("Error: %v", err)
@@ -23,7 +23,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to write file: %v", err)
 	}
-	fmt.Println("💾 Raw data saved to aws_resources.json")
+	fmt.Println("Raw data saved to aws_resources.json")
 
 	dotFile := "network_map.dot"
 	err = generateDOTFile(resources, dotFile)
@@ -31,22 +31,22 @@ func main() {
 		log.Fatalf("Failed to generate DOT file: %v", err)
 	}
 
-	fmt.Println("🎨 Rendering diagram...")
+	fmt.Println("Rendering diagram...")
 	cmd := exec.Command("dot", "-Tpng", dotFile, "-o", "network_map.png")
 	err = cmd.Run()
 	if err != nil {
 		log.Fatalf("Failed to render PNG: %v", err)
 	}
-	fmt.Println("✅ Diagram saved as network_map.png")
+	fmt.Println("Diagram saved as network_map.png")
 
 	risks := checkSecurityRisks(resources)
 	if len(risks) > 0 {
-		fmt.Println("\n🚨 SECURITY RISKS FOUND:")
+		fmt.Println("\nSECURITY RISKS FOUND:")
 		for _, risk := range risks {
 			fmt.Printf("  • [%s] %s: %s (Resource: %s)\n",
 				risk.Severity, risk.Type, risk.Details, risk.Resource)
 		}
 	} else {
-		fmt.Println("\n✅ No critical security risks detected.")
+		fmt.Println("\nNo critical security risks detected.")
 	}
 }
