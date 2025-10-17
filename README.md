@@ -1,140 +1,105 @@
-# cloud-netmapper
+# Cloud NetMapper
 
-A Go-based tool to automatically discover and visualize AWS VPC network topologies with basic security analysis.
+> Visualize your AWS network topology and detect security risks automatically
+
+Discover VPCs, subnets, instances, security groups, and load balancers—then generate a visual network diagram with built-in security analysis.
+
+---
 
 ## Features
 
-- **Network Discovery**: Fetches VPCs, subnets, EC2 instances, security groups, and load balancers from AWS
-- **Visual Mapping**: Generates network topology diagrams using Graphviz DOT format
-- **Security Analysis**: Performs basic security risk assessment on discovered resources
-- **Data Export**: Saves comprehensive resource data in JSON format
-- **Command-line Tool**: Simple execution with clear console output
+**Auto-Discovery** · Map your entire AWS network  
+**Visual Diagrams** · Generate PNG topology maps  
+**Security Scanning** · Detect open ports and misconfigurations  
+**JSON Export** · Save complete resource inventory
 
-## Requirements
+---
 
-- Go 1.25.1 or later
-- AWS CLI configured with appropriate IAM permissions
-- Graphviz (`dot` command) for diagram generation
+## Quick Start
 
-### AWS Permissions Required
-
-The tool requires the following AWS permissions:
-
-- `ec2:DescribeVpcs`
-- `ec2:DescribeSubnets`
-- `ec2:DescribeInstances`
-- `ec2:DescribeSecurityGroups`
-- `elasticloadbalancing:DescribeLoadBalancers`
-
-## Installation
-
-1. Clone the repository:
+### Prerequisites
 
 ```bash
-git clone https://github.com/saad-build/cloud-netmapper.git
+# macOS
+brew install go graphviz
+
+# Ubuntu/Debian
+sudo apt install golang graphviz
+```
+
+> **Requirements:** Go 1.25.1+, AWS CLI configured, Graphviz
+
+### Install
+
+```bash
+git clone https://github.com/msaadshabir/cloud-netmapper.git
 cd cloud-netmapper
-```
-
-2. Install dependencies:
-
-```bash
-go mod tidy
-```
-
-3. Build the application:
-
-```bash
 go build
 ```
 
-## Usage
-
-1. Configure AWS credentials:
+### Run
 
 ```bash
-aws configure
+aws configure                # Set up AWS credentials
+./cloud-netmapper           # Scan us-east-1 region
 ```
 
-2. Run the discovery (currently fixed to us-east-1):
+---
 
-```bash
-./cloud-netmapper
+## Output
+
+| File                 | Description                     |
+| -------------------- | ------------------------------- |
+| `network_map.png`    | Visual network topology diagram |
+| `network_map.dot`    | Graphviz source file            |
+| `aws_resources.json` | Complete resource inventory     |
+
+---
+
+## Security Checks
+
+- Open SSH/RDP/FTP ports to `0.0.0.0/0`
+- EC2 instances exposed without load balancers
+- Security group misconfigurations
+
+---
+
+## IAM Permissions
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DescribeVpcs",
+        "ec2:DescribeSubnets",
+        "ec2:DescribeInstances",
+        "ec2:DescribeSecurityGroups",
+        "elasticloadbalancing:DescribeLoadBalancers"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
 ```
 
-Or run directly:
+---
 
-```bash
-go run main.go
-```
+## Troubleshooting
 
-### Output
+**AWS credentials not found**  
+→ Run `aws configure`
 
-The tool generates:
+**Graphviz not installed**  
+→ `brew install graphviz` or `sudo apt install graphviz`
 
-- `aws_resources.json`: Complete AWS resource inventory
-- `network_map.dot`: Graphviz source file
-- `network_map.png`: Visual network diagram
+**Module errors**  
+→ Run `go mod tidy`
 
-### Console Output
+---
 
-```
-Fetching AWS resources...
-Raw data saved to aws_resources.json
-Rendering diagram...
-Diagram saved as network_map.png
+## License
 
-SECURITY RISKS FOUND:
-  • [High] Open Security Group: Port 22 open to 0.0.0.0/0 (Resource: default-sg)
-```
-
-## Security Analysis
-
-Current security checks include:
-
-- **Open Security Groups**: Ports 22, 3389, 21, 23, and 0 open to 0.0.0.0/0
-- **Direct Public Exposure**: EC2 instances with public IPs but no load balancer protection
-
-## Architecture
-
-```
-main.go                 # Application entry point and orchestration
-├── aws_collector.go    # AWS API client and resource collection
-├── visualizer.go       # Graphviz DOT file generation
-├── security_checker.go # Security risk analysis
-└── go.mod             # Go module dependencies
-```
-
-**"Failed to load AWS config"**
-
-- Ensure AWS credentials are configured: `aws configure`
-- Check IAM permissions include required EC2 and ELB permissions
-
-**"Failed to render PNG"**
-
-- Install Graphviz: `brew install graphviz` (macOS) or `sudo apt install graphviz` (Ubuntu)
-- Ensure `dot` command is in PATH
-
-**"no required module provides package"**
-
-- Run `go mod tidy` to download dependencies
-- Ensure Go 1.25.1+ is installed
-
-### Debug Mode
-
-For verbose output, modify the code to enable debug logging in the AWS SDK.
-
-```bash
-go build -o cloud-netmapper
-```
-
-### Running Tests
-
-```bash
-go test ./...
-```
-
-### Code Quality
-
-```bash
-golangci-lint run
-```
+MIT
