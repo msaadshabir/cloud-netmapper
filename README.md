@@ -1,5 +1,10 @@
 # Cloud NetMapper
 
+[![Go Version](https://img.shields.io/badge/Go-1.25.1+-00ADD8?style=flat&logo=go)](https://go.dev/)
+[![AWS](https://img.shields.io/badge/AWS-Cloud-FF9900?style=flat&logo=amazon-aws)](https://aws.amazon.com/)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat)](LICENSE)
+[![Graphviz](https://img.shields.io/badge/Graphviz-Required-5E5086?style=flat)](https://graphviz.org/)
+
 > Visualize your AWS network topology and detect security risks automatically
 
 Discover VPCs, subnets, instances, security groups, and load balancers—then generate a visual network diagram with built-in security analysis.
