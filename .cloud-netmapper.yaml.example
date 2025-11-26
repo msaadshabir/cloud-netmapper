@@ -1,0 +1,20 @@
+# Cloud NetMapper Configuration
+# Place this file as .cloud-netmapper.yaml in your project directory or home directory
+
+# AWS regions to scan
+regions:
+  - us-east-1
+  - us-west-2
+  - eu-west-1
+
+# Output settings
+output:
+  # Output format: png, svg, json, csv, markdown, html, sarif
+  format: png
+  # Output directory for generated files
+  directory: ./output
+
+# Security settings
+security:
+  # Minimum severity level to report: low, medium, high, critical
+  severity_threshold: low
